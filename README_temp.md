@@ -1,0 +1,1 @@
+This app is a GUI to search [Tax Court opinions](https://dawson.ustaxcourt.gov/) from about 1995 to April 2026.
