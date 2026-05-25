@@ -4,6 +4,23 @@ import re
 from pathlib import Path
 
 import FreeSimpleGUI as sg
+from platformdirs import user_data_dir
+
+APP_NAME = 'tax_court_opinion_search'
+
+
+def get_data_dir():
+    return Path(user_data_dir(APP_NAME))
+
+
+TEXT_FILES_PATH = get_data_dir() / 'text_files'
+
+
+def get_output_dir():
+    output_dir = get_data_dir() / 'output'
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    return output_dir
 
 
 def main():
@@ -97,11 +114,11 @@ def main():
 
 
 def get_case_text_files():
-    return [p for p in Path('text_files').iterdir() if p.is_file()]
+    return [p for p in TEXT_FILES_PATH.iterdir() if p.is_file()]
 
 
 def write_results(results):
-    results_path = Path('results.txt')
+    results_path = get_output_dir() / 'results.txt'
     results_path.write_text(''.join(results), encoding='utf-8')
     os.startfile(results_path.resolve())
 
