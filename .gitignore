@@ -19,4 +19,4 @@ my_stuff/
 tests/
 
 # omit the text files; these are found on huggingface
-src/tax_court_opinion_search/text_files
+text_files/

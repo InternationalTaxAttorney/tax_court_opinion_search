@@ -13,7 +13,16 @@ def get_data_dir():
     return Path(user_data_dir(APP_NAME))
 
 
-TEXT_FILES_PATH = get_data_dir() / 'text_files'
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+LOCAL_TEXT_FILES_PATH = PROJECT_ROOT / 'text_files'
+USER_TEXT_FILES_PATH = Path(user_data_dir(APP_NAME)) / 'text_files'
+
+
+def get_text_files_path():
+    if LOCAL_TEXT_FILES_PATH.exists():
+        return LOCAL_TEXT_FILES_PATH
+
+    return USER_TEXT_FILES_PATH
 
 
 def get_output_dir():
@@ -114,7 +123,8 @@ def main():
 
 
 def get_case_text_files():
-    return [p for p in TEXT_FILES_PATH.iterdir() if p.is_file()]
+    text_files = get_text_files_path()
+    return [p for p in text_files.iterdir() if p.is_file()]
 
 
 def write_results(results):
