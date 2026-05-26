@@ -1,6 +1,6 @@
 [project]
 name = "tax-court-opinion-search"
-version = "0.1.5"
+version = "0.1.6"
 description = "A simple GUI to search Tax Court opinions using regex or regular text."
 readme = "README.md"
 authors = [

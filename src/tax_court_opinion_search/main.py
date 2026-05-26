@@ -1,5 +1,7 @@
 import os
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import FreeSimpleGUI as sg
@@ -45,7 +47,12 @@ def load_dataframe():
 def write_results(results):
     results_path = get_output_dir() / 'results.txt'
     results_path.write_text(''.join(results), encoding='utf-8')
-    os.startfile(results_path.resolve())
+    if sys.platform == 'win32':
+        os.startfile(results_path.resolve())
+    elif sys.platform == 'darwin':
+        subprocess.run(['open', results_path.resolve()])
+    else:  # Linux
+        subprocess.run(['xdg-open', results_path.resolve()])
 
 
 def regex_search(df, pattern, num_before_chars, num_after_chars):
