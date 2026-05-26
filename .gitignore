@@ -20,3 +20,6 @@ tests/
 
 # omit the text files; these are found on huggingface
 text_files/
+
+# omit the data file; this comes from Hugging Face
+data.parquet
