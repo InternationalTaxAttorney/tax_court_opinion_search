@@ -1,6 +1,6 @@
 [project]
 name = "tax-court-opinion-search"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple GUI to search Tax Court opinions using regex or regular text."
 readme = "README.md"
 authors = [
@@ -15,7 +15,7 @@ dependencies = [
 
 [project.scripts]
 tc-search = "tax_court_opinion_search.main:main"
-tax_court_opinion_search = 'tax_court_opinion_search.cli:main'
+tax-court-opinion-search = 'tax_court_opinion_search.cli:main'
 
 [build-system]
 requires = ["hatchling"]
