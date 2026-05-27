@@ -23,14 +23,12 @@ def get_data_dir():
 def get_parquet_path():
     if LOCAL_PARQUET_PATH.exists():
         return LOCAL_PARQUET_PATH
-
     return USER_PARQUET_PATH
 
 
 def get_output_dir():
     output_dir = get_data_dir() / 'output'
     output_dir.mkdir(parents=True, exist_ok=True)
-
     return output_dir
 
 
@@ -40,7 +38,6 @@ def load_dataframe():
     if not parquet_path.exists():
         sg.popup_error(f'Could not find parquet file:\n\n{parquet_path}')
         raise FileNotFoundError(parquet_path)
-
     return pd.read_parquet(parquet_path)
 
 
@@ -69,28 +66,19 @@ def regex_search(df, pattern, num_before_chars, num_after_chars):
 
     for _, row in df.iterrows():
         text = str(row['text'])
-
         match = compiled_pattern.search(text)
 
         if match:
             case_name = row.get('filename', 'Unknown Case')
-
             results.append(f'{case_name}\n{match.group()}\n\n')
 
-    results.insert(
-        0,
-        f'Regex Pattern: {pattern}\n\nNumber of files found: {len(results)}\n\n',
-    )
-
+    results.insert(0, f'Regex Pattern: {pattern}\n\nNumber of files found: {len(results)}\n\n')
     write_results(results)
 
 
 def other_search(df, text_to_search_for, num_before_chars, num_after_chars):
-
     all_items = re.findall(r'"(.*?)"|(\S+)', text_to_search_for)
-
     all_items = [item for sublist in all_items for item in sublist if item]
-
     all_items = [item.lower() for item in all_items]
 
     if not all_items:
@@ -98,22 +86,16 @@ def other_search(df, text_to_search_for, num_before_chars, num_after_chars):
         return
 
     first_item = all_items[0]
-
     escaped_first_item = re.escape(first_item)
 
     try:
-        pattern = re.compile(
-            rf'.{{{num_before_chars}}}{escaped_first_item}.{{{num_after_chars}}}',
-            flags=re.DOTALL | re.IGNORECASE,
-        )
+        pattern = re.compile(rf'.{{{num_before_chars}}}{escaped_first_item}.{{{num_after_chars}}}', flags=re.DOTALL | re.IGNORECASE)
     except re.error as e:
         sg.popup_error(f'Invalid regex:\n\n{e}')
         return
 
     included = [item for item in all_items if not item.startswith('-')]
-
     excluded = [item[1:] for item in all_items if item.startswith('-')]
-
     results = []
 
     for _, row in df.iterrows():
@@ -128,14 +110,20 @@ def other_search(df, text_to_search_for, num_before_chars, num_after_chars):
         match = pattern.search(text)
 
         if match:
-            case_name = row.get('filename', 'Unknown Case')
+            year = row['year']
+            month = row['month']
+            day = row['day']
+            opinion_type = row['opinion_type']
+            opinion_name = row['opinion_name']
+            num_pages = row['num_pages']
+            docket_num = row['docket_number']
+            judge = row['judge_name']
+            match = match.group()
+            results.append(
+                f'    Date: {year}-{month}-{day}, Opinion Type: {opinion_type}, Number of Pages: {num_pages}, Docket No.:{docket_num}, Judge: {judge}\n    Taxpayer Name: {opinion_name}\n{match}\n\n'
+            )
 
-            results.append(f'{case_name}\n{match.group()}\n\n')
-
-    results.insert(
-        0,
-        f'[Non-regex] Search Term(s): {text_to_search_for}\n\nNumber of files found: {len(results)}\n\n',
-    )
+    results.insert(0, f'[Non-regex] Search Term(s): {text_to_search_for}\n\nNumber of files found: {len(results)}\n\n')
 
     write_results(results)
 
@@ -152,39 +140,21 @@ def main():
             sg.Text('Enter text in one of the two input fields below.'),
         ],
         [
-            sg.Text(
-                'Regular Expression (Regex) Search:',
-                font=18,
-                text_color='black',
-            ),
+            sg.Text('Regular Expression (Regex) Search:', font=18, text_color='black'),
         ],
         [
             sg.Text('Regex Pattern:'),
-            sg.Input(
-                key='regex_pattern',
-                size=(30, 1),
-                default_text='',
-                background_color='lightpink',
-            ),
+            sg.Input(key='regex_pattern', size=(30, 1), default_text='', background_color='lightpink'),
         ],
         [
             sg.Text(''),
         ],
         [
-            sg.Text(
-                'Normal Text Search (Non-Regex):',
-                font=18,
-                text_color='black',
-            ),
+            sg.Text('Normal Text Search (Non-Regex):', font=18, text_color='black'),
         ],
         [
             sg.Text('Search Term(s):'),
-            sg.Input(
-                key='text_to_search_for',
-                size=(30, 1),
-                default_text='',
-                background_color='lightpink',
-            ),
+            sg.Input(key='text_to_search_for', size=(30, 1), default_text='', background_color='lightpink'),
         ],
         [
             sg.Multiline(
@@ -201,49 +171,23 @@ def main():
         ],
         [
             sg.Text('Number of characters before search term(s):'),
-            sg.Input(
-                key='num_before_chars',
-                size=(6, 1),
-                default_text='300',
-                background_color='lightpink',
-            ),
+            sg.Input(key='num_before_chars', size=(6, 1), default_text='300', background_color='lightpink'),
         ],
         [
             sg.Text('Number of characters after search term(s):'),
-            sg.Input(
-                key='num_after_chars',
-                size=(6, 1),
-                default_text='300',
-                background_color='lightpink',
-            ),
+            sg.Input(key='num_after_chars', size=(6, 1), default_text='300', background_color='lightpink'),
         ],
         [
-            sg.Text(
-                'After entering the terms, press enter or click on the Search button',
-                font=('Arial', 12, 'bold'),
-                text_color='orange',
-            ),
+            sg.Text('After entering the terms, press enter or click on the Search button', font=('Arial', 12, 'bold'), text_color='orange'),
         ],
         [
             sg.Button('Search'),
             sg.Button('Cancel'),
         ],
-        [
-            sg.Text(
-                'Andrew Mitchel LLC, Copyright (c) 2026',
-                font=('Arial', 12, 'bold'),
-                text_color='black',
-            )
-        ],
+        [sg.Text('Andrew Mitchel LLC, Copyright (c) 2026', font=('Arial', 12, 'bold'), text_color='black')],
     ]
 
-    window = sg.Window(
-        'Search Tax Court Opinions',
-        layout,
-        return_keyboard_events=True,
-        finalize=True,
-    )
-
+    window = sg.Window('Search Tax Court Opinions', layout, return_keyboard_events=True, finalize=True)
     window['text_to_search_for'].set_focus()
 
     while True:
@@ -265,23 +209,11 @@ def main():
             continue
 
         if event in ('Search', '\r') and values['regex_pattern']:
-            regex_search(
-                df,
-                values['regex_pattern'],
-                num_before_chars,
-                num_after_chars,
-            )
-
+            regex_search(df, values['regex_pattern'], num_before_chars, num_after_chars)
             break
 
         if event in ('Search', '\r') and values['text_to_search_for']:
-            other_search(
-                df,
-                values['text_to_search_for'],
-                num_before_chars,
-                num_after_chars,
-            )
-
+            other_search(df, values['text_to_search_for'], num_before_chars, num_after_chars)
             break
 
     window.close()
