@@ -18,7 +18,7 @@ my_stuff/
 # omit tests for now
 tests/
 
-# omit the text files; these are found on huggingface
+# omit the text files
 text_files/
 
 # omit the data file; this comes from Hugging Face
