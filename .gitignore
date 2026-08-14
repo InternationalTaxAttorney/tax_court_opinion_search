@@ -12,9 +12,6 @@ wheels/
 # temporary file
 results.txt
 
-# extra files
-my_stuff/
-
 # omit tests for now
 tests/
 
