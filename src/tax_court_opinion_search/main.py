@@ -6,18 +6,13 @@ from pathlib import Path
 
 import FreeSimpleGUI as sg
 import pandas as pd
-from platformdirs import user_data_dir
 
-APP_NAME = 'tax_court_opinion_search'
+from tax_court_opinion_search.download import download_data, get_data_dir
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-LOCAL_PARQUET_PATH = PROJECT_ROOT / 'data.parquet'
-USER_PARQUET_PATH = Path(user_data_dir(APP_NAME)) / 'data.parquet'
-
-
-def get_data_dir():
-    return Path(user_data_dir(APP_NAME))
+LOCAL_PARQUET_PATH = PROJECT_ROOT / 'cases.parquet'
+USER_PARQUET_PATH = get_data_dir() / 'cases.parquet'
 
 
 def get_parquet_path():
@@ -32,8 +27,26 @@ def get_output_dir():
     return output_dir
 
 
+def show_download_popup():
+    layout = [[sg.Text('Downloading opinion data (~180MB). This happens once and may take a minute...')]]
+    window = sg.Window('Please wait', layout, finalize=True)
+    window.read(timeout=0)
+    return window
+
+
 def load_dataframe():
     parquet_path = get_parquet_path()
+
+    if not parquet_path.exists():
+        popup = show_download_popup()
+        try:
+            download_data()
+        except Exception as e:
+            sg.popup_error(f'Failed to download data:\n\n{e}')
+            raise FileNotFoundError(parquet_path) from e
+        finally:
+            popup.close()
+        parquet_path = get_parquet_path()
 
     if not parquet_path.exists():
         sg.popup_error(f'Could not find parquet file:\n\n{parquet_path}')

@@ -18,5 +18,5 @@ tests/
 # omit the text files
 text_files/
 
-# omit the data file; this comes from Hugging Face
-data.parquet
+# omit parquet file; this comes from Hugging Face
+*.parquet

@@ -14,7 +14,7 @@ def download_data():
     data_dir = get_data_dir()
 
     snapshot_download(
-        repo_id='andrew-mitchel/tax_court_opinions',
+        repo_id='andrew-mitchel/tax-court-opinions',
         repo_type='dataset',
         local_dir=data_dir,
         local_dir_use_symlinks=False,
