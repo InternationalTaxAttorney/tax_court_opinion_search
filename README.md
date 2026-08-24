@@ -1,6 +1,6 @@
 # Tax Court Opinion Search
 
-A small desktop GUI for searching the full text of [U.S. Tax Court opinions](https://dawson.ustaxcourt.gov/) (roughly 1995 through April 2026) — no coding required.
+A small desktop GUI for searching the full text of [U.S. Tax Court opinions](https://dawson.ustaxcourt.gov/) (1995 to present, updated monthly) — no coding required.
 
 ## Features
 - Search across all opinions with plain text or a full regex pattern
@@ -17,7 +17,7 @@ tc-search
 ```
 The first command installs [uv](https://docs.astral.sh/uv/), a fast Python package/tool manager. Already have Python set up your own way? `pip install tax-court-opinion-search` works too, as long as `tc-search` ends up on your PATH.
 
-The first time `tc-search` runs, it automatically downloads the opinion dataset (~180MB) from Hugging Face — this only happens once. If you ever need to force a re-download (e.g. after a dataset update), run `tax-court-opinion-search download-data`.
+The first time `tc-search` runs, it automatically downloads the opinion dataset (~180MB) from Hugging Face. That download only happens once — new opinions are added to the dataset monthly, but `tc-search` won't pick them up on its own. Run `tax-court-opinion-search download-data` any time to pull the latest version.
 
 ## Usage
 Fill in exactly one of the two search fields, then press Enter or click **Search**:
@@ -33,7 +33,7 @@ Use the **Number of characters before/after** fields to control how much surroun
 When the search finishes, the results file opens automatically. It's also saved under your user data folder (e.g. `%LOCALAPPDATA%\tax_court_opinion_search\tax_court_opinion_search\output\results.txt` on Windows) if you want to find it again later.
 
 ## Data
-The dataset lives on [Hugging Face](https://huggingface.co/datasets/andrew-mitchel/tax-court-opinions) and contains the text of 14,789 Tax Court opinions. The Tax Court publishes opinions as PDFs; these were converted to text and compiled into a single parquet file, with one row per opinion including its date, opinion type, number of pages, docket number, judge, taxpayer's name, and full text.
+The dataset lives on [Hugging Face](https://huggingface.co/datasets/andrew-mitchel/tax-court-opinions) and contains the text of 14,789 Tax Court opinions, with new opinions added monthly. The Tax Court publishes opinions as PDFs; these were converted to text and compiled into a single parquet file, with one row per opinion including its date, opinion type, number of pages, docket number, judge, taxpayer's name, and full text.
 
 Older opinions were converted using OCR, and text for opinions from 2009–2012 in particular is less accurate than other years.
 
