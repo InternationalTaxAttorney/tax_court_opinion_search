@@ -29,7 +29,8 @@ def get_output_dir():
 
 def show_download_popup():
     layout = [[sg.Text('Downloading opinion data (~180MB). This happens once and may take a minute...')]]
-    window = sg.Window('Please wait', layout, finalize=True)
+    window = sg.Window('Please wait', layout, keep_on_top=True, finalize=True)
+    window.force_focus()
     window.read(timeout=0)
     return window
 
